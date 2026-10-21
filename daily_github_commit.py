@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import csv
 import os
-import re
 import shutil
 import subprocess
 from dataclasses import dataclass
@@ -19,7 +18,6 @@ CSV_COLUMNS = (
     "remote_url",
     "auto_commit",
     "auto_push",
-    "schedule_time",
     "commit_message",
 )
 GIT_USER_COLUMNS = ("profile_name", "git_name", "git_email", "github_username")
@@ -121,13 +119,11 @@ def add_repository(
     remote_url: str,
     auto_commit: bool,
     auto_push: bool,
-    schedule_time: str,
     commit_message: str,
     csv_file: str | Path = DEFAULT_CSV,
 ) -> dict[str, str | bool]:
     name = name.strip()
     remote_url = remote_url.strip()
-    schedule_time = schedule_time.strip()
     commit_message = commit_message.strip()
     folder_path = Path(path).expanduser()
 
@@ -139,8 +135,6 @@ def add_repository(
         raise ValueError("remote_url is required.")
     if not isinstance(auto_commit, bool) or not isinstance(auto_push, bool):
         raise ValueError("auto_commit and auto_push must be bool values.")
-    if not re.fullmatch(r"(?:[01]\d|2[0-3]):[0-5]\d", schedule_time):
-        raise ValueError("schedule_time must use 24-hour HH:MM format.")
     if not commit_message:
         raise ValueError("commit_message is required.")
     folder = str(folder_path.resolve())
@@ -165,7 +159,6 @@ def add_repository(
             "remote_url": remote_url,
             "auto_commit": str(auto_commit).lower(),
             "auto_push": str(auto_push).lower(),
-            "schedule_time": schedule_time,
             "commit_message": commit_message,
         })
     return {
@@ -174,7 +167,6 @@ def add_repository(
         "remote_url": remote_url,
         "auto_commit": auto_commit,
         "auto_push": auto_push,
-        "schedule_time": schedule_time,
         "commit_message": commit_message,
     }
 
@@ -203,17 +195,12 @@ def load_repositories(
                 raise ValueError(f"Invalid auto_commit on CSV line {line_number}.")
             if values["auto_push"].lower() not in {"true", "false"}:
                 raise ValueError(f"Invalid auto_push on CSV line {line_number}.")
-            if not re.fullmatch(
-                r"(?:[01]\d|2[0-3]):[0-5]\d", values["schedule_time"]
-            ):
-                raise ValueError(f"Invalid schedule_time on CSV line {line_number}.")
             repositories.append({
                 "name": values["name"],
                 "path": values["path"],
                 "remote_url": values["remote_url"],
                 "auto_commit": values["auto_commit"].lower() == "true",
                 "auto_push": values["auto_push"].lower() == "true",
-                "schedule_time": values["schedule_time"],
                 "commit_message": values["commit_message"],
             })
         return repositories
@@ -622,8 +609,7 @@ GitCommit
                 for number, item in enumerate(repositories, start=1):
                     print(
                         f"{number}. {item['name']} | {item['path']} | "
-                        f"commit={item['auto_commit']} | push={item['auto_push']} | "
-                        f"time={item['schedule_time']}"
+                        f"commit={item['auto_commit']} | push={item['auto_push']}"
                     )
                 continue
 
@@ -633,7 +619,6 @@ GitCommit
                 remote_url = input("GitHub remote URL: ").strip()
                 auto_commit_value = input("Enable auto commit? [y/N]: ").strip().lower()
                 auto_push_value = input("Enable auto push? [y/N]: ").strip().lower()
-                schedule_time = input("Daily schedule time (HH:MM): ").strip()
                 commit_message = input("Default commit message: ").strip()
 
                 repo_path = initialize_repository(path)
@@ -655,7 +640,6 @@ GitCommit
                     remote_url=remote_url,
                     auto_commit=auto_commit_value in {"y", "yes", "true", "1"},
                     auto_push=auto_push_value in {"y", "yes", "true", "1"},
-                    schedule_time=schedule_time,
                     commit_message=commit_message,
                 )
                 print(f"Saved {item['name']}.")

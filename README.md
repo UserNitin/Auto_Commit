@@ -63,7 +63,6 @@ add_repository(
     "https://github.com/your-name/project.git",
     True,
     True,
-    "22:00",
     "Automated commit",
 )
 
@@ -76,14 +75,12 @@ for repository in load_repositories():
 Repository records use `repositories.csv` with this header:
 
 ```csv
-name,path,remote_url,auto_commit,auto_push,schedule_time,commit_message
+name,path,remote_url,auto_commit,auto_push,commit_message
 ```
 
 `load_repositories()` converts `auto_commit` and `auto_push` to Python
 booleans. `auto_commit(repository)` accepts a loaded row, uses its default
 commit message, and pushes only when that row's `auto_push` value is `true`.
-The `schedule_time` setting is stored in 24-hour `HH:MM` format for the caller
-or scheduler to use.
 
 When a repository is added from the GUI, GitCommit sets its
 `origin` URL, commits all current changes, and performs an initial push.

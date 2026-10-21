@@ -4,7 +4,7 @@ import sys
 from collections.abc import Callable
 from typing import Any
 
-from PyQt6.QtCore import QObject, QRunnable, QThreadPool, QTime, Qt, pyqtSignal
+from PyQt6.QtCore import QObject, QRunnable, QThreadPool, Qt, pyqtSignal
 from PyQt6.QtGui import QCloseEvent
 from PyQt6.QtWidgets import (
     QAbstractItemView,
@@ -28,7 +28,6 @@ from PyQt6.QtWidgets import (
     QTableWidget,
     QTableWidgetItem,
     QTextEdit,
-    QTimeEdit,
     QVBoxLayout,
     QWidget,
 )
@@ -69,8 +68,6 @@ class RepositoryDialog(QDialog):
         self.auto_push = QCheckBox()
         self.auto_commit.setChecked(True)
         self.auto_push.setChecked(True)
-        self.time = QTimeEdit(QTime(21, 0))
-        self.time.setDisplayFormat("HH:mm")
         self.message = QLineEdit("Automated commit")
 
         form = QFormLayout()
@@ -79,7 +76,6 @@ class RepositoryDialog(QDialog):
         form.addRow("GitHub URL", self.remote)
         form.addRow("Auto commit", self.auto_commit)
         form.addRow("Auto push", self.auto_push)
-        form.addRow("Schedule time", self.time)
         form.addRow("Commit message", self.message)
 
         buttons = QDialogButtonBox(
@@ -100,7 +96,6 @@ class RepositoryDialog(QDialog):
             "remote_url": self.remote.text().strip(),
             "auto_commit": self.auto_commit.isChecked(),
             "auto_push": self.auto_push.isChecked(),
-            "schedule_time": self.time.time().toString("HH:mm"),
             "commit_message": self.message.text().strip(),
         }
 
@@ -224,9 +219,9 @@ class GitCommitWindow(QMainWindow):
         layout.addWidget(title)
         layout.addWidget(subtitle)
 
-        self.repo_table.setColumnCount(6)
+        self.repo_table.setColumnCount(5)
         self.repo_table.setHorizontalHeaderLabels(
-            ["Name", "Local folder", "Remote", "Auto commit", "Auto push", "Time"]
+            ["Name", "Local folder", "Remote", "Auto commit", "Auto push"]
         )
         self.repo_table.setSelectionBehavior(
             QAbstractItemView.SelectionBehavior.SelectRows
@@ -242,7 +237,6 @@ class GitCommitWindow(QMainWindow):
         header.setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
         header.setSectionResizeMode(3, QHeaderView.ResizeMode.ResizeToContents)
         header.setSectionResizeMode(4, QHeaderView.ResizeMode.ResizeToContents)
-        header.setSectionResizeMode(5, QHeaderView.ResizeMode.ResizeToContents)
         layout.addWidget(self.repo_table)
 
         first_row = QHBoxLayout()
@@ -422,7 +416,6 @@ class GitCommitWindow(QMainWindow):
                 item["remote_url"],
                 "Yes" if item["auto_commit"] else "No",
                 "Yes" if item["auto_push"] else "No",
-                item["schedule_time"],
             ]
             for column, value in enumerate(values):
                 self.repo_table.setItem(row, column, QTableWidgetItem(str(value)))
