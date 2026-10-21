@@ -1,0 +1,4 @@
+name,path,remote_url,auto_commit,auto_push,schedule_time,commit_message
+FFT mini-project & case-study,D:\collage\MCA\FFT nitin,https://github.com/UserNitin/FFT_NITIN.git,true,true,23:00,auto commit
+data Science,D:\collage\major project,https://github.com/UserNitin/Typhydrion.git,true,false,22:00,auto commit
+Python git auto commit,C:\Users\NITIN\Downloads\Python project,https://github.com/UserNitin/Auto_Commit.git,true,true,22:00,initial auto commit
