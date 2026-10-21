@@ -853,4 +853,6 @@ GitCommit
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    from gitcommit_gui import run_gui
+
+    raise SystemExit(run_gui())

@@ -16,19 +16,25 @@ directly inside Git Bash:
 - `auto_commit()`
 - `get_repo_status()`
 
-Install Git for Windows and Python 3. No third-party Python package is needed.
+Install Git for Windows, Python 3, and the GUI dependency:
+
+```powershell
+py -3 -m pip install -r requirements.txt
+```
+
 The program locates Git Bash at `C:\Program Files\Git\bin\bash.exe`. A custom
 location can be supplied through the `GIT_BASH_PATH` environment variable.
 
-Start the interactive menu:
+Start the PyQt6 desktop application:
 
 ```powershell
 py -3 daily_github_commit.py
 ```
 
-The menu can add, list, and remove repositories; show status and history; pull,
-select files to commit, push, run every enabled auto-commit immediately, and
-manage Git/GitHub user profiles.
+The GUI can add, list, and remove repositories; show status and history; pull,
+select files to commit, push, run every enabled auto-commit immediately, show
+activity logs, and manage Git/GitHub user profiles. Git operations run on
+background workers so the window remains responsive.
 
 Git user profiles are stored in `git_users.csv` with:
 
@@ -79,7 +85,7 @@ commit message, and pushes only when that row's `auto_push` value is `true`.
 The `schedule_time` setting is stored in 24-hour `HH:MM` format for the caller
 or scheduler to use.
 
-When a repository is added from the interactive menu, GitCommit sets its
+When a repository is added from the GUI, GitCommit sets its
 `origin` URL, commits all current changes, and performs an initial push.
 If the selected existing folder is not already a Git repository, GitCommit
 first initializes it with `git init -b main` through Git Bash.

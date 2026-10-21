@@ -1,1 +1,1 @@
-# No third-party Python packages are required.
+PyQt6>=6.7
